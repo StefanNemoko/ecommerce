@@ -20,14 +20,17 @@ import {
     DocumentDuplicateIcon,
     FolderIcon,
     HomeIcon,
-    UsersIcon,
     XMarkIcon,
+    UserIcon,
+    CubeIcon,
 } from '@heroicons/react/24/outline'
 import {ChevronDownIcon, MagnifyingGlassIcon} from '@heroicons/react/20/solid'
+import {Link, usePage} from "@inertiajs/react";
+import { route } from 'ziggy-js';
 
 const navigation = [
-    {name: 'Dashboard', href: '#', icon: HomeIcon, current: true},
-    {name: 'Team', href: '#', icon: UsersIcon, current: false},
+    {name: 'Dashboard', href: route('backend.dashboard'), icon: HomeIcon, current: true},
+    {name: 'Products', href: route('backend.products'), icon: CubeIcon, current: false},
     {name: 'Projects', href: '#', icon: FolderIcon, current: false},
     {name: 'Calendar', href: '#', icon: CalendarIcon, current: false},
     {name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false},
@@ -47,8 +50,9 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const AuthenticatedLayout = ({header, children}) => {
+const AuthenticatedLayout = ({children, auth}) => {
 
+    // local state
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
     return (
@@ -180,8 +184,7 @@ const AuthenticatedLayout = ({header, children}) => {
                                     <ul role="list" className="-mx-2 space-y-1">
                                         {navigation.map((item) => (
                                             <li key={item.name}>
-                                                <a
-                                                    href={item.href}
+                                                <Link href={item.href}
                                                     className={classNames(
                                                         item.current
                                                             ? 'bg-indigo-700 text-white'
@@ -197,7 +200,7 @@ const AuthenticatedLayout = ({header, children}) => {
                                                         )}
                                                     />
                                                     {item.name}
-                                                </a>
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>
@@ -282,14 +285,10 @@ const AuthenticatedLayout = ({header, children}) => {
                                 <Menu as="div" className="relative">
                                     <MenuButton className="-m-1.5 flex items-center p-1.5">
                                         <span className="sr-only">Open user menu</span>
-                                        <img
-                                            alt=""
-                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                            className="size-8 rounded-full bg-gray-50"
-                                        />
+                                        <UserIcon className="size-10 rounded-full bg-gray-100 p-1.5"/>
                                         <span className="hidden lg:flex lg:items-center">
                       <span aria-hidden="true" className="ml-4 text-sm/6 font-semibold text-gray-900">
-                        Tom Cook
+                        {auth.user.name}
                       </span>
                       <ChevronDownIcon aria-hidden="true" className="ml-2 size-5 text-gray-400"/>
                     </span>

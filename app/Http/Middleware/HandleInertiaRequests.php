@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -29,11 +31,15 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Set layout based on if the user is authenticated.
+        $layout = $request->user() ? 'AuthenticatedLayout' : 'GuestLayout';
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'layout' => $layout,
         ];
     }
 }

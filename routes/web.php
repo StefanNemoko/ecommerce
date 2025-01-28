@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,14 +13,21 @@ Route::get('/', function () {
     ]);
 });
 
+Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::get('/backend/dashboard', function () {
+        return Inertia::render('Backend/Dashboard');
+    });
+    Route::get('/backend/products', [App\Http\Controllers\ProductController::class, 'index'])->name('backend.products');
+});
+
 Route::get('/backend/dashboard', function () {
     return Inertia::render('Backend/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('backend.dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/backend/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/backend/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/backend/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/backend/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/backend/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/backend/profile', [App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
