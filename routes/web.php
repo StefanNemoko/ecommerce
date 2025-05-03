@@ -16,13 +16,9 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/backend/dashboard', function () {
         return Inertia::render('Backend/Dashboard');
-    });
+    })->name('backend.dashboard');
     Route::get('/backend/products', [App\Http\Controllers\ProductController::class, 'index'])->name('backend.products');
 });
-
-Route::get('/backend/dashboard', function () {
-    return Inertia::render('Backend/Dashboard');
-})->middleware(['auth', 'verified'])->name('backend.dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/backend/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');

@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useCallback, useEffect, useMemo, useState} from 'react'
 import {
     Dialog,
     DialogBackdrop,
@@ -28,43 +28,90 @@ import {ChevronDownIcon, MagnifyingGlassIcon} from '@heroicons/react/20/solid'
 import {Link, usePage} from "@inertiajs/react";
 import { route } from 'ziggy-js';
 
-const navigation = [
-    {name: 'Dashboard', href: route('backend.dashboard'), icon: HomeIcon, current: true},
-    {name: 'Products', href: route('backend.products'), icon: CubeIcon, current: false},
-    {name: 'Projects', href: '#', icon: FolderIcon, current: false},
-    {name: 'Calendar', href: '#', icon: CalendarIcon, current: false},
-    {name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: false},
-    {name: 'Reports', href: '#', icon: ChartPieIcon, current: false},
-]
-const teams = [
-    {id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false},
-    {id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false},
-    {id: 3, name: 'Workcation', href: '#', initial: 'W', current: false},
-]
-const userNavigation = [
-    {name: 'Your profile', href: '#'},
-    {name: 'Sign out', href: '#'},
-]
-
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 const AuthenticatedLayout = ({children, auth}) => {
-
     // local state
-    const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [currentUrl, setCurrentUrl] = useState(window.location.href);
+
+    const [navigation, setNavigation] = useState([]);
+
+    const [userNavigation, setUserNavigation] = useState([
+        {name: 'Your profile', href: '#'},
+        {name: 'Sign out', href: '#'},
+    ]);
+
+    // unfortunately, adding window.location.href as a dependency does not work
+    // Therefor I added an eventListener that listens to popstate changes
+    useEffect(() => {
+        // Update the URL when the location changes
+        const handleLocationChange = () => {
+            console.log(window.location.href);
+            setCurrentUrl(window.location.href);
+        };
+
+        // Listen for popstate events (for browser back/forward button, etc.)
+        window.addEventListener('popstate', handleLocationChange);
+
+        // Cleanup on component unmount
+        return () => {
+            window.removeEventListener('popstate', handleLocationChange);
+        };
+
+
+
+    }, []);
+
+    useEffect(() => {
+        // Load in navigation and keep track of currentUrl to update current state
+        setNavigation([
+            {name: 'Dashboard', href: route('backend.dashboard'), icon: HomeIcon, current: route('backend.dashboard') === currentUrl},
+            {name: 'Products', href: route('backend.products'), icon: CubeIcon, current: route('backend.products') === currentUrl},
+            {name: 'Projects', href: '#', icon: FolderIcon, current: '#' === currentUrl},
+            {name: 'Calendar', href: '#', icon: CalendarIcon, current: '#' === currentUrl},
+            {name: 'Documents', href: '#', icon: DocumentDuplicateIcon, current: '#' === currentUrl},
+            {name: 'Reports', href: '#', icon: ChartPieIcon, current: '#' === currentUrl},
+        ]);
+    }, [currentUrl, navigation]);
+
+    const renderNavigation = useMemo(() => {
+        return (
+            <div>
+                {navigation?.map((item) => {
+                    return (
+                        <li key={item.name}>
+                            <Link
+                                href={item.href}
+                                className={classNames(
+                                    item.current
+                                        ? 'bg-indigo-700 text-white'
+                                        : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
+                                    'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                                )}
+                                onClick={() => setCurrentUrl(item.href)}
+                            >
+                                <item.icon
+                                    aria-hidden="true"
+                                    className={classNames(
+                                        item.current ? 'text-white' : 'text-indigo-200 group-hover:text-white',
+                                        'size-6 shrink-0',
+                                    )}
+                                />
+                                {item.name}
+                            </Link>
+                        </li>
+                    );
+                })}
+            </div>
+        );
+    }, [navigation]);
+
 
     return (
         <>
-            {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
             <div>
                 <Dialog open={sidebarOpen} onClose={setSidebarOpen} className="relative z-50 lg:hidden">
                     <DialogBackdrop
@@ -100,56 +147,11 @@ const AuthenticatedLayout = ({children, auth}) => {
                                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                                         <li>
                                             <ul role="list" className="-mx-2 space-y-1">
-                                                {navigation.map((item) => (
-                                                    <li key={item.name}>
-                                                        <a
-                                                            href={item.href}
-                                                            className={classNames(
-                                                                item.current
-                                                                    ? 'bg-indigo-700 text-white'
-                                                                    : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
-                                                                'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-                                                            )}
-                                                        >
-                                                            <item.icon
-                                                                aria-hidden="true"
-                                                                className={classNames(
-                                                                    item.current ? 'text-white' : 'text-indigo-200 group-hover:text-white',
-                                                                    'size-6 shrink-0',
-                                                                )}
-                                                            />
-                                                            {item.name}
-                                                        </a>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <div className="text-xs/6 font-semibold text-indigo-200">Your teams</div>
-                                            <ul role="list" className="-mx-2 mt-2 space-y-1">
-                                                {teams.map((team) => (
-                                                    <li key={team.name}>
-                                                        <a
-                                                            href={team.href}
-                                                            className={classNames(
-                                                                team.current
-                                                                    ? 'bg-indigo-700 text-white'
-                                                                    : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
-                                                                'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-                                                            )}
-                                                        >
-                              <span
-                                  className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                                {team.initial}
-                              </span>
-                                                            <span className="truncate">{team.name}</span>
-                                                        </a>
-                                                    </li>
-                                                ))}
+                                                {renderNavigation}
                                             </ul>
                                         </li>
                                         <li className="mt-auto">
-                                            <a
+                                            <Link
                                                 href="#"
                                                 className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:bg-indigo-700 hover:text-white"
                                             >
@@ -158,7 +160,7 @@ const AuthenticatedLayout = ({children, auth}) => {
                                                     className="size-6 shrink-0 text-indigo-200 group-hover:text-white"
                                                 />
                                                 Settings
-                                            </a>
+                                            </Link>
                                         </li>
                                     </ul>
                                 </nav>
@@ -182,55 +184,11 @@ const AuthenticatedLayout = ({children, auth}) => {
                             <ul role="list" className="flex flex-1 flex-col gap-y-7">
                                 <li>
                                     <ul role="list" className="-mx-2 space-y-1">
-                                        {navigation.map((item) => (
-                                            <li key={item.name}>
-                                                <Link href={item.href}
-                                                    className={classNames(
-                                                        item.current
-                                                            ? 'bg-indigo-700 text-white'
-                                                            : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
-                                                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-                                                    )}
-                                                >
-                                                    <item.icon
-                                                        aria-hidden="true"
-                                                        className={classNames(
-                                                            item.current ? 'text-white' : 'text-indigo-200 group-hover:text-white',
-                                                            'size-6 shrink-0',
-                                                        )}
-                                                    />
-                                                    {item.name}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div className="text-xs/6 font-semibold text-indigo-200">Your teams</div>
-                                    <ul role="list" className="-mx-2 mt-2 space-y-1">
-                                        {teams.map((team) => (
-                                            <li key={team.name}>
-                                                <a
-                                                    href={team.href}
-                                                    className={classNames(
-                                                        team.current
-                                                            ? 'bg-indigo-700 text-white'
-                                                            : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
-                                                        'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-                                                    )}
-                                                >
-                          <span
-                              className="flex size-6 shrink-0 items-center justify-center rounded-lg border border-indigo-400 bg-indigo-500 text-[0.625rem] font-medium text-white">
-                            {team.initial}
-                          </span>
-                                                    <span className="truncate">{team.name}</span>
-                                                </a>
-                                            </li>
-                                        ))}
+                                        {renderNavigation}
                                     </ul>
                                 </li>
                                 <li className="mt-auto">
-                                    <a
+                                    <Link
                                         href="#"
                                         className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:bg-indigo-700 hover:text-white"
                                     >
@@ -239,7 +197,7 @@ const AuthenticatedLayout = ({children, auth}) => {
                                             className="size-6 shrink-0 text-indigo-200 group-hover:text-white"
                                         />
                                         Settings
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         </nav>
@@ -299,12 +257,12 @@ const AuthenticatedLayout = ({children, auth}) => {
                                     >
                                         {userNavigation.map((item) => (
                                             <MenuItem key={item.name}>
-                                                <a
+                                                <Link
                                                     href={item.href}
                                                     className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
                                                 >
                                                     {item.name}
-                                                </a>
+                                                </Link>
                                             </MenuItem>
                                         ))}
                                     </MenuItems>

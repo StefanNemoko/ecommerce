@@ -31,8 +31,8 @@ class Product extends Model
     ];
 
     protected $attributes = [
-        'status' => ProductStatus::ACTIVE,
-        'discount_type' => DiscountType::FIXED,
+        'status' => ProductStatus::ACTIVE->value,
+        'discount_type' => DiscountType::FIXED->value,
         'tax' => 21.00,
         'price' => 0.00,
     ];
@@ -45,6 +45,6 @@ class Product extends Model
      */
     public function scopeActive(Builder $query): void
     {
-        $query->where('status', ProductStatus::ACTIVE);
+        $query->where('status', ProductStatus::ACTIVE->value);
     }
 }

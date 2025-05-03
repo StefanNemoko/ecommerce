@@ -1,8 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.jsx';
 import {Head} from '@inertiajs/react';
+import {useMemo} from "react";
 
 export default function Dashboard() {
-    return (
+    return useMemo(() => (
         <div>
             <Head title="Dashboard"/>
 
@@ -16,5 +17,5 @@ export default function Dashboard() {
                 </div>
             </div>
         </div>
-    );
+    ), []);
 }
