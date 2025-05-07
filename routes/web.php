@@ -5,12 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+	return Inertia::render('Backend/Dashboard');
 });
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
@@ -18,6 +13,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         return Inertia::render('Backend/Dashboard');
     })->name('backend.dashboard');
     Route::get('/backend/products', [App\Http\Controllers\ProductController::class, 'index'])->name('backend.products');
+    Route::get('/backend/products/{product}', [App\Http\Controllers\ProductController::class, 'show'])->name('backend.products.show');
 });
 
 Route::middleware('auth')->group(function () {
