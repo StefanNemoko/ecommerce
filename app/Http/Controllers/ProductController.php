@@ -23,7 +23,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render(' Backend/Product/Show/Index',
+		[
+			'product' => New Product()
+		]);
     }
 
     /**
@@ -31,7 +34,23 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+		//TODO:: enum validation op discount_type en status
+		// max_length
+		// Omzetten naar custom request (makkelijker bij te houden)
+        $product = Product::firstOrNew($request->validate([
+			'id' => 'nullable',
+			'name' => 'required',
+			'description' => 'required',
+			'status' => 'required',
+			'price' => 'required',
+			'tax' => 'required',
+			'discount' => 'nullable',
+			'discount_type' => 'required',
+			'stock' => 'nullable',
+			'sku' => 'nullable',
+		]));
+
+		dd($product);
     }
 
     /**

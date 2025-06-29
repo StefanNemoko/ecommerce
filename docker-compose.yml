@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ecommerce_app
+        volumes:
+            -   .:/var/www/html
+        ports:
+            -   "8000:80"
+        depends_on:
+            -   db
+        environment:
+            - APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+    node:
+        image: node:20
+        container_name: ecommerce_node
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+        ports:
+            - "5173:5173"
+        command: sh -c "npm install && npm run dev"
+
+
+    db:
+        image: mysql:8.0
+        container_name: ecommerce_db
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: ecommerce
+            MYSQL_ROOT_PASSWORD: LOGIN_1234!
+            MYSQL_USER: ecommerce_connection
+            MYSQL_PASSWORD: ECOMMERCE_LOGIN_1234!
+        volumes:
+            -   dbdata:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        ports:
+            - "8081:80"
+        environment:
+            PMA_HOST: db
+            MYSQL_ROOT_PASSWORD: LOGIN_1234!

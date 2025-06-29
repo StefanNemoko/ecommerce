@@ -14,6 +14,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     })->name('backend.dashboard');
     Route::get('/backend/products', [App\Http\Controllers\ProductController::class, 'index'])->name('backend.products');
     Route::get('/backend/products/{product}', [App\Http\Controllers\ProductController::class, 'show'])->name('backend.products.show');
+    Route::post('/backend/products', [App\Http\Controllers\ProductController::class, 'store'])->name('backend.products.save');
 });
 
 Route::middleware('auth')->group(function () {

@@ -1,5 +1,6 @@
 import {useCallback, useMemo, useRef, useState} from "react";
 import {Textarea} from "@headlessui/react";
+import {router} from "@inertiajs/react";
 
 const ManageProduct = ({originalProduct}) => {
 	const [product, setProduct] = useState(originalProduct);
@@ -16,7 +17,10 @@ const ManageProduct = ({originalProduct}) => {
 	const handleSave = useCallback((e) => {
 		e.preventDefault();
 		// API call or form submit logic goes here
-	}, []);
+
+		router.post('/backend/products', product);
+
+	}, [product, images]);
 
 	const handleCancel = useCallback(() => {
 		window.history.back();
@@ -206,7 +210,8 @@ const ManageProduct = ({originalProduct}) => {
 						<img
 							src={typeof image === 'string' ? image : URL.createObjectURL(image)}
 							alt={`Uploaded ${index}`}
-							className="w-full h-32 object-cover"
+							className="w-full h-32 object-contain"
+
 						/>
 						<button
 							type="button"
