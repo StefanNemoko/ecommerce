@@ -19,6 +19,7 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
+		// TODO:: wanneer je inlogt wordt de layout niet goed gezet. Hierdoor moet je handmatig de pagina verversen om de juiste layout te zien te krijgen.
         const Layout = props.initialPage.props.layout === 'AuthenticatedLayout' ? AuthenticatedLayout : GuestLayout;
 
         root.render(

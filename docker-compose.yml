@@ -47,3 +47,6 @@ services:
         environment:
             PMA_HOST: db
             MYSQL_ROOT_PASSWORD: LOGIN_1234!
+
+volumes:
+    dbdata:

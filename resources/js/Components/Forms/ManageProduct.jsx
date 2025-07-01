@@ -1,26 +1,24 @@
 import {useCallback, useMemo, useRef, useState} from "react";
 import {Textarea} from "@headlessui/react";
-import {router} from "@inertiajs/react";
+import {useForm} from "@inertiajs/react";
 
 const ManageProduct = ({originalProduct}) => {
-	const [product, setProduct] = useState(originalProduct);
 	const [activeTab, setActiveTab] = useState('general');
 	const [images, setImages] = useState([]);
 	const fileInputRef = useRef(null);
+	const {data, setData, post, processing, errors} = useForm({...originalProduct});
+
+	console.log(originalProduct);
 
 	const handleChange = useCallback((e) => {
-		setProduct(prev => {
-			return {...prev, [e.target.name]: e.target.value};
-		});
-	}, [product]);
+		setData(e.target.name, e.target.value);
+	}, [data]);
 
 	const handleSave = useCallback((e) => {
 		e.preventDefault();
-		// API call or form submit logic goes here
+		post('/backend/products');
 
-		router.post('/backend/products', product);
-
-	}, [product, images]);
+	}, [data, images]);
 
 	const handleCancel = useCallback(() => {
 		window.history.back();
@@ -48,7 +46,7 @@ const ManageProduct = ({originalProduct}) => {
 				<input
 					type="text"
 					name="name"
-					value={product.name}
+					value={data.name}
 					onChange={handleChange}
 					className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 					placeholder="Enter product name"
@@ -60,7 +58,7 @@ const ManageProduct = ({originalProduct}) => {
 				<label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
 				<Textarea
 					name="description"
-					value={product.description}
+					value={data.description}
 					onChange={handleChange}
 					className="w-full min-h-42 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 					placeholder="Enter product name"
@@ -72,7 +70,7 @@ const ManageProduct = ({originalProduct}) => {
 				<label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
 				<select
 					name="status"
-					value={product.status}
+					value={data.status}
 					onChange={handleChange}
 					className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 				>
@@ -87,7 +85,7 @@ const ManageProduct = ({originalProduct}) => {
 					<input
 						type="number"
 						name="price"
-						value={product.price}
+						value={data.price}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						placeholder="0.00"
@@ -101,7 +99,7 @@ const ManageProduct = ({originalProduct}) => {
 					<input
 						type="number"
 						name="tax"
-						value={product.tax}
+						value={data.tax}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						placeholder="Tax"
@@ -116,12 +114,11 @@ const ManageProduct = ({originalProduct}) => {
 					<input
 						type="number"
 						name="discount"
-						value={product.discount}
+						value={data.discount}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						placeholder="0.00"
 						step="0.01"
-						required
 					/>
 				</div>
 
@@ -129,7 +126,7 @@ const ManageProduct = ({originalProduct}) => {
 					<label className="block text-sm font-medium text-gray-700 mb-1">Discount type</label>
 					<select
 						name="discount_type"
-						value={product.discount_type}
+						value={data.discount_type}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 					>
@@ -145,12 +142,11 @@ const ManageProduct = ({originalProduct}) => {
 					<input
 						type="number"
 						name="stock"
-						value={product.stock}
+						value={data.stock}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						placeholder="0.00"
 						step="0.01"
-						required
 					/>
 				</div>
 
@@ -159,7 +155,7 @@ const ManageProduct = ({originalProduct}) => {
 					<input
 						type="text"
 						name="sku"
-						value={product.sku}
+						value={data.sku}
 						onChange={handleChange}
 						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
 						placeholder="SKU"
@@ -167,7 +163,7 @@ const ManageProduct = ({originalProduct}) => {
 				</div>
 			</div>
 		</>
-	), [product]);
+	), [data]);
 
 	const RenderImageTab = useCallback(() => {
 		return (
@@ -268,13 +264,14 @@ const ManageProduct = ({originalProduct}) => {
 					<button
 						type="submit"
 						className="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+						disabled={processing}
 					>
 						Save
 					</button>
 				</div>
 			</form>
 		)
-	}, [product, activeTab, RenderGeneralTab, RenderImageTab]);
+	}, [data, activeTab, RenderGeneralTab, RenderImageTab, processing]);
 };
 
 export default ManageProduct;

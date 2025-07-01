@@ -15,42 +15,42 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('/backend/login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+        ->name('backend.login');
 
     Route::post('/backend/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('/backend/forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+        ->name('backend.password.request');
 
     Route::post('/backend/forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
+        ->name('backend.password.email');
 
     Route::get('/backend/reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
+        ->name('backend.password.reset');
 
     Route::post('/backend/reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+        ->name('backend.password.store');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/backend/verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice');
+        ->name('backend.verification.notice');
 
     Route::get('/backend/verify-email/{id}/{hash}', VerifyEmailController::class)
         ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
+        ->name('backend.verification.verify');
 
     Route::post('/backend/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
-        ->name('verification.send');
+        ->name('backend.verification.send');
 
     Route::get('/backend/confirm-password', [ConfirmablePasswordController::class, 'show'])
-        ->name('password.confirm');
+        ->name('backend.password.confirm');
 
     Route::post('/backend/confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::put('/backend/password', [PasswordController::class, 'update'])->name('password.update');
 
     Route::post('/backend/logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+        ->name('backend.logout');
 });

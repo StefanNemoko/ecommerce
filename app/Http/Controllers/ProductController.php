@@ -23,9 +23,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render(' Backend/Product/Show/Index',
+        return Inertia::render('Backend/Product/Show/Index',
 		[
-			'product' => New Product()
+			'product' => new Product(),
 		]);
     }
 
@@ -37,6 +37,7 @@ class ProductController extends Controller
 		//TODO:: enum validation op discount_type en status
 		// max_length
 		// Omzetten naar custom request (makkelijker bij te houden)
+		//TODO:: errors in het formulier tonen.
         $product = Product::firstOrNew($request->validate([
 			'id' => 'nullable',
 			'name' => 'required',
@@ -50,7 +51,14 @@ class ProductController extends Controller
 			'sku' => 'nullable',
 		]));
 
-		dd($product);
+		if ($product->isDirty()) {
+			$product->save();
+
+			return to_route('backend.products.show', $product);
+		}
+
+		//TODO:: er viel niks te updaten, toon dit als melding.
+		return to_route('backend.products.show', $product);
     }
 
     /**
