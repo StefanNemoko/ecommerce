@@ -7,8 +7,6 @@ RUN apt-get update && apt-get install -y \
 # Enable Apache mod_rewrite for Laravel
 RUN a2enmod rewrite
 
-WORKDIR /var/www/html
-
 # Copy existing app files to container
 COPY . .
 
@@ -27,3 +25,13 @@ RUN echo "<VirtualHost *:80>\n\
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Create a user with the same User ID & Group ID as the host user.
+ARG UID=1000
+ARG GID=1000
+
+RUN addgroup --gid $GID appgroup && \
+    adduser --disabled-password --gecos '' --uid $UID --gid $GID appuser
+
+USER appuser
+WORKDIR /var/www/html

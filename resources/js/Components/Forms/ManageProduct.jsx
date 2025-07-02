@@ -8,8 +8,6 @@ const ManageProduct = ({originalProduct}) => {
 	const fileInputRef = useRef(null);
 	const {data, setData, post, processing, errors} = useForm({...originalProduct});
 
-	console.log(originalProduct);
-
 	const handleChange = useCallback((e) => {
 		setData(e.target.name, e.target.value);
 	}, [data]);
@@ -48,10 +46,13 @@ const ManageProduct = ({originalProduct}) => {
 					name="name"
 					value={data.name}
 					onChange={handleChange}
-					className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+					className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						+ (errors.name ? " border-red-500 ring-red-500" : " border-gray-300")
+					}
 					placeholder="Enter product name"
 					required
 				/>
+				{errors.name && <span className="mt-1 text-sm text-red-600">{errors.name}</span>}
 			</div>
 
 			<div>
@@ -60,10 +61,13 @@ const ManageProduct = ({originalProduct}) => {
 					name="description"
 					value={data.description}
 					onChange={handleChange}
-					className="w-full min-h-42 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-					placeholder="Enter product name"
+					className={"w-full min-h-42 rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						+ (errors.description ? " border-red-500 ring-red-500" : " border-gray-300")
+					}
+					placeholder="Enter product description"
 					required
 				/>
+				{errors.description && <span className="mt-1 text-sm text-red-600">{errors.description}</span>}
 			</div>
 
 			<div>
@@ -72,11 +76,14 @@ const ManageProduct = ({originalProduct}) => {
 					name="status"
 					value={data.status}
 					onChange={handleChange}
-					className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+					className={"w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						+ (errors.status ? " border-red-500 ring-red-500" : " border-gray-300")
+					}
 				>
 					<option value="active">Active</option>
 					<option value="inactive">Inactive</option>
 				</select>
+				{errors.status && <span className="mt-1 text-sm text-red-600">{errors.status}</span>}
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -87,11 +94,14 @@ const ManageProduct = ({originalProduct}) => {
 						name="price"
 						value={data.price}
 						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							+ (errors.price ? " border-red-500 ring-red-500" : " border-gray-300")
+						}
 						placeholder="0.00"
 						step="0.01"
 						required
 					/>
+					{errors.price && <span className="mt-1 text-sm text-red-600">{errors.price}</span>}
 				</div>
 
 				<div>
@@ -101,10 +111,13 @@ const ManageProduct = ({originalProduct}) => {
 						name="tax"
 						value={data.tax}
 						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							+ (errors.tax ? " border-red-500 ring-red-500" : " border-gray-300")
+						}
 						placeholder="Tax"
 						required
 					/>
+					{errors.tax && <span className="mt-1 text-sm text-red-600">{errors.tax}</span>}
 				</div>
 			</div>
 
@@ -116,10 +129,13 @@ const ManageProduct = ({originalProduct}) => {
 						name="discount"
 						value={data.discount}
 						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							+ (errors.discount ? " border-red-500 ring-red-500" : " border-gray-300")
+						}
 						placeholder="0.00"
 						step="0.01"
 					/>
+					{errors.discount && <span className="mt-1 text-sm text-red-600">{errors.discount}</span>}
 				</div>
 
 				<div>
@@ -128,11 +144,14 @@ const ManageProduct = ({originalProduct}) => {
 						name="discount_type"
 						value={data.discount_type}
 						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							+ (errors.discount_type ? " border-red-500 ring-red-500" : " border-gray-300")
+						}
 					>
 						<option value="fixed">Fixed</option>
 						<option value="percentage">Percentage</option>
 					</select>
+					{errors.discount_type && <span className="mt-1 text-sm text-red-600">{errors.discount_type}</span>}
 				</div>
 			</div>
 
@@ -144,10 +163,13 @@ const ManageProduct = ({originalProduct}) => {
 						name="stock"
 						value={data.stock}
 						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							+ (errors.stock ? " border-red-500 ring-red-500" : " border-gray-300")
+						}
 						placeholder="0.00"
 						step="0.01"
 					/>
+					{errors.stock && <span className="mt-1 text-sm text-red-600">{errors.stock}</span>}
 				</div>
 
 				<div>
@@ -157,13 +179,17 @@ const ManageProduct = ({originalProduct}) => {
 						name="sku"
 						value={data.sku}
 						onChange={handleChange}
-						className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+						className={"w-full rounded-md border px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+							+ (errors.sku ? " border-red-500 ring-red-500" : " border-gray-300")
+						}
 						placeholder="SKU"
 					/>
+					{errors.sku && <span className="mt-1 text-sm text-red-600">{errors.sku}</span>}
+
 				</div>
 			</div>
 		</>
-	), [data]);
+	), [data, errors]);
 
 	const RenderImageTab = useCallback(() => {
 		return (

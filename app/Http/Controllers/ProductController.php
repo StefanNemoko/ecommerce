@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Backend\Product\ManageRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -32,24 +33,9 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ManageRequest $request)
     {
-		//TODO:: enum validation op discount_type en status
-		// max_length
-		// Omzetten naar custom request (makkelijker bij te houden)
-		//TODO:: errors in het formulier tonen.
-        $product = Product::firstOrNew($request->validate([
-			'id' => 'nullable',
-			'name' => 'required',
-			'description' => 'required',
-			'status' => 'required',
-			'price' => 'required',
-			'tax' => 'required',
-			'discount' => 'nullable',
-			'discount_type' => 'required',
-			'stock' => 'nullable',
-			'sku' => 'nullable',
-		]));
+        $product = Product::firstOrNew($request->validated());
 
 		if ($product->isDirty()) {
 			$product->save();
